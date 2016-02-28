@@ -1,10 +1,10 @@
 package harshit.weatherreport;
 
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -26,10 +26,11 @@ import java.net.URL;
 import java.net.URLEncoder;
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends Activity {
 
     EditText cityName;
-    TextView resultTextView;
+    TextView resultTextView,temperature,humidity;
+
 
     public void findWeather(View view) {
 
@@ -68,6 +69,8 @@ public class MainActivity extends AppCompatActivity {
 
         cityName = (EditText) findViewById(R.id.cityName);
         resultTextView = (TextView) findViewById(R.id.resultTextView);
+        temperature=(TextView) findViewById(R.id.tempp);
+        humidity=(TextView) findViewById(R.id.humd);
 
     }
 
@@ -124,8 +127,23 @@ public class MainActivity extends AppCompatActivity {
                 JSONObject jsonObject = new JSONObject(result);
 
                 String weatherInfo = jsonObject.getString("weather");
+                String tempInfo=jsonObject.getString("main");
+
 
                 Log.i("Weather content", weatherInfo);
+                Log.i("Temp content", tempInfo);
+                JSONObject jsontemp=new JSONObject(tempInfo);
+                String temp=jsontemp.getString("temp");
+                double number = Double.parseDouble(temp);
+                Double tempInF= (number-273.15)* 1.8000 + 32.00;
+
+               String tp= String.format("%.2f", tempInF);
+
+
+                temperature.setText(tp);
+                String hu=jsontemp.getString("humidity");
+                humidity.setText(hu);
+                Log.i("Temp==", temp);
 
                 JSONArray arr = new JSONArray(weatherInfo);
 
@@ -136,8 +154,10 @@ public class MainActivity extends AppCompatActivity {
                     String main = "";
                     String description = "";
 
+
                     main = jsonPart.getString("main");
                     description = jsonPart.getString("description");
+
 
                     if (main != "" && description != "") {
 
